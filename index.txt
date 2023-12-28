@@ -1,1 +1,2 @@
-this is my first commit on git
+this is my first commit
+adding a new line into my commit
