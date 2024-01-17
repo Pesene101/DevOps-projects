@@ -28,3 +28,23 @@ After launching the Ubuntu Virtual machine on AWS Account, install Apache2 using
 To verify that apache2 is running as a server, use the following command;
 
 **`sudo systemctl status apache2`**
+
+![system_check](./images/system_check.PNG)
+This is the outcome of the above command.
+
+To verify locally in your ubuntu shell, run the following command;
+
+`$ curl http://localhost:80
+or
+$ curl http://127.0.0.1:80
+`
+
+![Curl_local](./images/curl_local.PNG)
+
+Now its' time to test if the apache2 http server can respond to a web request. Open a web browser of your choice and try to access the following url;
+**`http://<Public-ip-Address>:80`**
+
+![apache_home](./images/apache2_home.PNG)
+
+
+# --------**Installing MySql**----------
