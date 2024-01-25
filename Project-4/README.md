@@ -29,6 +29,18 @@ To verify that `niginx` was installed successfully and is running as a service i
 
 ![nginx_status](./images/nginx_status.PNG)
 
+ Verify the web server is reachable from the localhost
+
+```
+ curl http://localhost:80
+
+or
+
+ curl http://127.0.0.1:80
+ 
+```
+
+![curl localhost](./images/curl.PNG)
 Type the address that you receive in your web browser and it will take you to Nginx’s default landing page:
 
 `http://<Public-IP-Address>:80`
@@ -44,6 +56,21 @@ Install MySQL by typing the following command:
 `sudo apt install mysql-server`
 
 The MySQL database software is now installed, but its configuration is not yet complete.
+
+login to mysql
+
+`sudo mysql`
+
+
+![Mysql login](./images/mysql.PNG)
+
+We will run a security script that comes with Mysql to change some insecure default settings, but before then we are setting root password as shown below.
+
+`ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'PassWord.1'`
+
+Exit Mysql.
+
+`exit`
 
 To secure the installation, MySQL comes with a script that will ask whether you want to modify some insecure defaults. Initiate the script by typing the following:
 
@@ -127,8 +154,8 @@ Add the following content, which was taken and slightly modified from the defaul
 ```
 server {
         listen 80;
-        root /var/www/html;
-        index index.php index.html index.htm index.nginx-debian.html;
+        root /var/www/projectLEMP;
+        index index.html index.htm index.php;
         server_name your_domain;
 
         location / {
@@ -186,6 +213,7 @@ Your LEMP stack should now be completely set up. You can test it to validate tha
 
 To do this, use your preferred text editor to create a test PHP file called `info.php` in your document root:
 
+
 `sudo nano /var/www/html/info.php`
 
 Enter the following lines into the new file. This is valid PHP code that will return information about your server:
@@ -211,6 +239,99 @@ For now, remove the file:
 `sudo rm /var/www/html/info.php`
 
 With that, you have a fully configured and functioning LEMP stack on your Ubuntu 22.04 server.
+
+## ................RETRIEVING DATA FROM MYSQL DATABASE WITH PHP...............
+---
+
+We will create a database named lemp_database and a user named lemp_user.
+
+First, connect to the MySQL console using the root account and password:
+
+**`sudo mysql -p`**
+
+Let's create a new database and user.
+
+**`mysql> CREATE DATABASE `\`test_database \`;**
+
+
+Now you can create a new user and grant him full privileges on the database you have just created.
+
+**`mysql>  CREATE USER 'test_user'@'%' IDENTIFIED WITH mysql_native_password BY 'PassWord.1';`**
+
+Now we need to give this user permission over the lemp_database database:
+
+`mysql> GRANT ALL ON test_database.* TO 'test_user'@'%';`
+
+This will give the lemp_user user full privileges over the   **test_database** database, while preventing this user from creating or modifying other databases on your server.
+
+Let's exit the MySQL shell with:  **`exit`**
+
+Now we login to our `test_database` with the new `test_user` account created.
+
+**`mysql -u test_user -p test_database`**
+
+Let's confirm we have access to `test_database`.
+
+**`mysql> SHOW DATABASES;`**
+
+![Show database output](./images/DATA.PNG)
+
+Next, we’ll create a test table named todo_list with the following statement:
+
+```
+ CREATE TABLE test_database.todo_list (item_id INT AUTO_INCREMENT,content VARCHAR(255),PRIMARY KEY(item_id));
+```
+Let's insert a few rows of content in the test table. Ywe will repeat the next command a few times, using different VALUES:
+
+```
+INSERT INTO test_database.todo_list (content) VALUES ("My first database item");
+INSERT INTO test_database.todo_list (content) VALUES ("My second important item");
+```
+To see the contents of our table, run the command:
+
+**`mysql> select * from test_database.todo_list;`**
+
+![MYSQL table query output](./images/data_base.PNG)
+
+we will exit MYSQL.
+**`exit`**
+
+We will create a PHP script that will connect to MySQL and query the content. let's create a new PHP file in the custom web root directory.
+
+**`vi /var/www/projectLEMP/todo_list.php`**
+
+```
+<?php
+$user = "test_user";
+$password = "PassWord.1";
+$database = "test_database";
+$table = "todo_list";
+
+try {
+  $db = new PDO("mysql:host=localhost;dbname=$database", $user, $password);
+  echo "<h2>TODO</h2><ol>";
+  foreach($db->query("SELECT content FROM $table") as $row) {
+    echo "<li>" . $row['content'] . "</li>";
+  }
+  echo "</ol>";
+} catch (PDOException $e) {
+    print "Error!: " . $e->getMessage() . "<br/>";
+    die();
+}
+```
+Save and close Nano.
+`:wq` then press `Enter`.
+
+Mow lets access the todo_list.php page from our web browser
+
+**`http://<Public_domain_or_IP>/todo_list.php`**
+
+![todo_list php webpage](./images/todo.PNG)
+
+If you get an output like the picture above it shows the php environment can successfuy interaxt with the mysql database.
+
+**NOTE!**
+ Make sure the `php-fpm.sock` version referenced in the `etc/nginx/sites-available/projectLEMP` and `etc/nginx/sites-enabled/projectLEMP` files is the same version as the one installed in the `/var/run/php/` folder.
 
 THANK YOU!!!
 
