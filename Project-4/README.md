@@ -1,4 +1,4 @@
-## Documentation For AWS LAMP STACK IMPLEMENTATION
+## Documentation For AWS LEMP STACK IMPLEMENTATION
 # This Project shows how to implement LEMP(Linux,Nginx,Mysql,PhP) Stack on AWS
 
 The LEMP software stack is a group of software that can be used to serve dynamic web pages and web applications. This is an acronym that describes a Linux operating system, with an Nginx (pronounced like “Engine-X”) web server. The backend data is stored in the MySQL database and the dynamic processing is handled by PHP.
