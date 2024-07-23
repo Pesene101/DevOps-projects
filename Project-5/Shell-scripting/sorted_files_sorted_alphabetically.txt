@@ -1,0 +1,7 @@
+file1.txt
+file2.txt
+file3.txt
+images
+navigating-linus-filestyle.sh
+sorting.sh
+user-input.sh
